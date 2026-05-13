@@ -67,9 +67,9 @@ Chain strategy: feature-branch-chain
 
 ## Phase 5: Tests + Seed
 
-- [ ] 5.1 `tests/conftest.py` — SQLite `async_session`, `async_client` with overrides
-- [ ] 5.2 Domain tests: `tests/domain/test_{barber,service,appointment,admin}.py`
-- [ ] 5.3 Application tests: `tests/application/test_{barber,auth,appointment}_use_cases.py`
-- [ ] 5.4 Infra tests: `tests/infrastructure/test_{barber_repo,jwt,n8n,redis_repo}.py`
-- [ ] 5.5 Interface tests: `tests/interfaces/test_api_{barbers,appointments,auth,availability}.py`
-- [ ] 5.6 Seed migration: `alembic/versions/002_seed_admin.py` — INSERT bcrypt-hashed admin
+- [x] 5.1 `tests/conftest.py` — SQLite `async_session`, `async_client` with overrides
+- [x] 5.2 Domain tests: `tests/domain/test_{barber,service,appointment,admin}.py`
+- [x] 5.3 Application tests: `tests/application/test_{barber,auth,appointment}_use_cases.py`
+- [x] 5.4 Infra tests: `tests/infrastructure/test_{barber_repo,jwt,n8n,redis_repo}.py`
+- [x] 5.5 Interface tests: `tests/interfaces/test_api_{barbers,appointments,auth,availability}.py`
+- [x] 5.6 Seed migration: `alembic/versions/002_seed_admin.py` — INSERT bcrypt-hashed admin
