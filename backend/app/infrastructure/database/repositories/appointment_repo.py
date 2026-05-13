@@ -74,18 +74,18 @@ class SQLAlchemyAppointmentRepository(AppointmentRepository):
             client_phone=appointment.client_phone,
             status=appointment.status,
         )
-        self._session.add(model)
+        merged = await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(model)
+        await self._session.refresh(merged)
         return Appointment(
-            id=model.id,
-            date=model.date,
-            time=model.time,
-            barber_id=model.barber_id,
-            service_id=model.service_id,
-            client_name=model.client_name,
-            client_phone=model.client_phone,
-            status=model.status,
+            id=merged.id,
+            date=merged.date,
+            time=merged.time,
+            barber_id=merged.barber_id,
+            service_id=merged.service_id,
+            client_name=merged.client_name,
+            client_phone=merged.client_phone,
+            status=merged.status,
         )
 
     async def delete(self, appointment_id: uuid.UUID) -> None:
