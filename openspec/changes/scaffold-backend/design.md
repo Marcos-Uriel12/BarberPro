@@ -58,7 +58,7 @@ Client → POST /api/v1/appointments
   → CreateAppointmentUseCase(repo).execute(data)
     → AvailabilityRepo checks barber has slot that day
     → AppointmentRepo.save(appointment) → status="pending"
-    → BackgroundTasks.add_task(N8nNotifier.notify, event)
+    → BackgroundTasks.add_task(notify_n8n, event)
     → TempClientRepo.store(client_key, data, ttl=3600)
   → AppointmentOut schema response (201)
   ↳ Background: httpx POST to N8N_WEBHOOK_URL (fire-and-forget)
@@ -178,10 +178,10 @@ Below is every file to create (37 files). Files marked ✓ already exist.
 | `backend/app/infrastructure/redis/__init__.py` | Package marker |
 | `backend/app/infrastructure/redis/client_repo.py` | `TempClientRepository` with Redis hash + TTL |
 | `backend/app/infrastructure/notifications/__init__.py` | Package marker |
-| `backend/app/infrastructure/notifications/n8n.py` | `N8nNotifier` with httpx POST |
+| `backend/app/infrastructure/notifications/n8n.py` | `notify_n8n` standalone async function |
 | `backend/app/infrastructure/auth/__init__.py` | Package marker |
 | `backend/app/infrastructure/auth/jwt.py` | `JWTService` — encode/decode |
-| `backend/app/infrastructure/auth/password.py` | `PasswordService` — hash/verify via passlib bcrypt |
+| `backend/app/infrastructure/auth/password.py` | `hash_password` / `verify_password` via bcrypt directly |
 
 ### Interfaces: Schemas
 | File | Description |
@@ -428,7 +428,7 @@ sqlalchemy.url =  # LEAVE EMPTY — we use settings.DATABASE_URL in env.py
 ### `pyproject.toml`
 
 UV project with these dependency groups:
-- **Runtime**: `fastapi[standard]>=0.115`, `sqlalchemy[asyncio]>=2.0`, `asyncpg`, `alembic>=1.13`, `pydantic-settings`, `passlib[bcrypt]`, `pyjwt`, `httpx`, `redis[hiredis]`, `python-dotenv`
+- **Runtime**: `fastapi[standard]>=0.115`, `sqlalchemy[asyncio]>=2.0`, `asyncpg`, `alembic>=1.13`, `pydantic-settings`, `bcrypt`, `pyjwt`, `httpx`, `redis[hiredis]`, `python-dotenv`
 - **Dev**: `pytest>=8`, `pytest-asyncio`, `aiosqlite`, `pytest-httpx`, `coverage`
 
 ### `app/main.py`
