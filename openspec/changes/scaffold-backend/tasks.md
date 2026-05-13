@@ -58,12 +58,12 @@ Chain strategy: feature-branch-chain
 
 ## Phase 4: Use Cases + Schemas + API
 
-- [ ] 4.1 5 use cases: `app/application/use_cases/{barber,service,appointment,availability,auth}_use_cases.py`
-- [ ] 4.2 5 schemas: `app/interfaces/schemas/{barber,service,availability,appointment,auth}_schema.py`
-- [ ] 4.3 `app/interfaces/api/dependencies.py` — `get_session`, `get_current_admin`, `get_jwt_service`
-- [ ] 4.4 `app/interfaces/api/v1/router.py` — aggregator router
-- [ ] 4.5 5 endpoints: `app/interfaces/api/v1/endpoints/{auth,barbers,services,appointments,availability}.py`
-- [ ] 4.6 Update `app/main.py` — mount router, CORS from settings
+- [x] 4.1 5 use cases: `app/application/use_cases/{barber,service,appointment,availability,auth}_use_cases.py`
+- [x] 4.2 5 schemas: `app/interfaces/schemas/{barber,service,availability,appointment,auth}_schema.py`
+- [x] 4.3 `app/interfaces/api/dependencies.py` — `get_session`, `get_current_admin`, `get_jwt_service`
+- [x] 4.4 `app/interfaces/api/v1/router.py` — aggregator router
+- [x] 4.5 5 endpoints: `app/interfaces/api/v1/endpoints/{auth,barbers,services,appointments,availability}.py`
+- [x] 4.6 Update `app/main.py` — mount router, CORS from settings
 
 ## Phase 5: Tests + Seed
 
