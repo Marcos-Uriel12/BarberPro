@@ -50,11 +50,11 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: Infrastructure
 
-- [ ] 3.1 5 repos: `app/infrastructure/database/repositories/{barber,service,availability,appointment,admin}_repo.py`
-- [ ] 3.2 `app/infrastructure/auth/jwt.py` — `JWTService.create_token()`, `verify_token()`
-- [ ] 3.3 `app/infrastructure/auth/password.py` — hash/verify via passlib bcrypt
-- [ ] 3.4 `app/infrastructure/redis/client_repo.py` — hash + 3600s TTL
-- [ ] 3.5 `app/infrastructure/notifications/n8n.py` — httpx POST, no-op if empty URL
+- [x] 3.1 5 repos: `app/infrastructure/database/repositories/{barber,service,availability,appointment,admin}_repo.py`
+- [x] 3.2 `app/infrastructure/auth/jwt.py` — `JWTService.create_token()`, `verify_token()`
+- [x] 3.3 `app/infrastructure/auth/password.py` — hash/verify via bcrypt directly
+- [x] 3.4 `app/infrastructure/redis/client_repo.py` — hash + 3600s TTL
+- [x] 3.5 `app/infrastructure/notifications/n8n.py` — httpx POST, no-op if empty URL
 
 ## Phase 4: Use Cases + Schemas + API
 

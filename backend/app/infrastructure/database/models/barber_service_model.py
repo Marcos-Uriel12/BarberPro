@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal
 
 from sqlalchemy import ForeignKey, Integer, Numeric
@@ -10,12 +11,12 @@ from app.infrastructure.database.base import Base
 class BarberServiceModel(Base):
     __tablename__ = "barber_services"
 
-    barber_id: Mapped[str] = mapped_column(
+    barber_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("barbers.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    service_id: Mapped[str] = mapped_column(
+    service_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("services.id", ondelete="CASCADE"),
         primary_key=True,

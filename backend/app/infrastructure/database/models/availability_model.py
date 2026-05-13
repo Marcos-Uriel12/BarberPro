@@ -1,3 +1,4 @@
+import uuid
 from datetime import time
 
 from sqlalchemy import ForeignKey, Integer, Time
@@ -10,7 +11,7 @@ from app.infrastructure.database.base import Base, CommonMixin
 class AvailabilityModel(Base, CommonMixin):
     __tablename__ = "availabilities"
 
-    barber_id: Mapped[str] = mapped_column(
+    barber_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("barbers.id", ondelete="CASCADE"),
         nullable=False,
