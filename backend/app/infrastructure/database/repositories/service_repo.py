@@ -48,14 +48,14 @@ class SQLAlchemyServiceRepository(ServiceRepository):
             price=service.price,
             duration_minutes=service.duration_minutes,
         )
-        self._session.add(model)
+        merged = await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(model)
+        await self._session.refresh(merged)
         return Service(
-            id=model.id,
-            name=model.name,
-            price=model.price,
-            duration_minutes=model.duration_minutes,
+            id=merged.id,
+            name=merged.name,
+            price=merged.price,
+            duration_minutes=merged.duration_minutes,
         )
 
     async def delete(self, service_id: uuid.UUID) -> None:

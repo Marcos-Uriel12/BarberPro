@@ -55,15 +55,15 @@ class SQLAlchemyAvailabilityRepository(AvailabilityRepository):
             start_time=availability.start_time,
             end_time=availability.end_time,
         )
-        self._session.add(model)
+        merged = await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(model)
+        await self._session.refresh(merged)
         return Availability(
-            id=model.id,
-            barber_id=model.barber_id,
-            day_of_week=model.day_of_week,
-            start_time=model.start_time,
-            end_time=model.end_time,
+            id=merged.id,
+            barber_id=merged.barber_id,
+            day_of_week=merged.day_of_week,
+            start_time=merged.start_time,
+            end_time=merged.end_time,
         )
 
     async def delete(self, availability_id: uuid.UUID) -> None:
