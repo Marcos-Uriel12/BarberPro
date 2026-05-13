@@ -23,8 +23,8 @@ class AppointmentOut(BaseModel):
     id: UUID
     date: date
     time: time
-    barber_id: UUID
-    service_id: UUID
+    barber_name: str
+    service_name: str
     client_name: str
     client_phone: str
     status: str

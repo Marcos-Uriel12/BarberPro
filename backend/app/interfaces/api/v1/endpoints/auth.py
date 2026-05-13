@@ -47,7 +47,10 @@ async def login(
 
 
 @router.post("/logout")
-async def logout(response: Response) -> dict[str, str]:
+async def logout(
+    response: Response,
+    _admin: dict = Depends(get_current_admin),
+) -> dict[str, str]:
     """Clear access_token cookie to log out."""
     response.delete_cookie(key="access_token", path="/")
     return {"message": "ok"}

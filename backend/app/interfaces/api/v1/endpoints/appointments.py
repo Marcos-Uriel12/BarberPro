@@ -10,8 +10,16 @@ from app.application.use_cases.appointment_use_cases import (
     ListAppointmentsUseCase,
     UpdateAppointmentStatusUseCase,
 )
+from app.domain.entities.barber import Barber
+from app.domain.entities.service import Service
 from app.infrastructure.database.repositories.appointment_repo import (
     SQLAlchemyAppointmentRepository,
+)
+from app.infrastructure.database.repositories.barber_repo import (
+    SQLAlchemyBarberRepository,
+)
+from app.infrastructure.database.repositories.service_repo import (
+    SQLAlchemyServiceRepository,
 )
 from app.interfaces.api.dependencies import get_current_admin, get_session
 from app.interfaces.schemas.appointment_schema import (
@@ -30,6 +38,8 @@ async def create_appointment(
 ) -> AppointmentOut:
     """Create a new appointment (public)."""
     repo = SQLAlchemyAppointmentRepository(session)
+    barber_repo = SQLAlchemyBarberRepository(session)
+    service_repo = SQLAlchemyServiceRepository(session)
     use_case = CreateAppointmentUseCase(repo)
     appointment = await use_case.execute(
         barber_id=body.barber_id,
@@ -39,12 +49,14 @@ async def create_appointment(
         client_name=body.client_name,
         client_phone=body.client_phone,
     )
+    barber = await barber_repo.get_by_id(appointment.barber_id)
+    service = await service_repo.get_by_id(appointment.service_id)
     return AppointmentOut(
         id=appointment.id,
         date=appointment.date,
         time=appointment.time,
-        barber_id=appointment.barber_id,
-        service_id=appointment.service_id,
+        barber_name=barber.name if barber else "Unknown",
+        service_name=service.name if service else "Unknown",
         client_name=appointment.client_name,
         client_phone=appointment.client_phone,
         status=appointment.status,
@@ -61,25 +73,33 @@ async def list_appointments(
 ) -> list[AppointmentOut]:
     """List appointments with optional status filter and pagination (admin only)."""
     repo = SQLAlchemyAppointmentRepository(session)
+    barber_repo = SQLAlchemyBarberRepository(session)
+    service_repo = SQLAlchemyServiceRepository(session)
     use_case = ListAppointmentsUseCase(repo)
     appointments = await use_case.execute(
         status=status_filter,
         page=page,
         size=size,
     )
-    return [
-        AppointmentOut(
-            id=a.id,
-            date=a.date,
-            time=a.time,
-            barber_id=a.barber_id,
-            service_id=a.service_id,
-            client_name=a.client_name,
-            client_phone=a.client_phone,
-            status=a.status,
+
+    # batch-resolve barber and service names
+    result: list[AppointmentOut] = []
+    for a in appointments:
+        barber = await barber_repo.get_by_id(a.barber_id)
+        service = await service_repo.get_by_id(a.service_id)
+        result.append(
+            AppointmentOut(
+                id=a.id,
+                date=a.date,
+                time=a.time,
+                barber_name=barber.name if barber else "Unknown",
+                service_name=service.name if service else "Unknown",
+                client_name=a.client_name,
+                client_phone=a.client_phone,
+                status=a.status,
+            )
         )
-        for a in appointments
-    ]
+    return result
 
 
 @router.put("/{appointment_id}/status", response_model=AppointmentOut)
@@ -91,6 +111,8 @@ async def update_appointment_status(
 ) -> AppointmentOut:
     """Update appointment status (admin only)."""
     repo = SQLAlchemyAppointmentRepository(session)
+    barber_repo = SQLAlchemyBarberRepository(session)
+    service_repo = SQLAlchemyServiceRepository(session)
     use_case = UpdateAppointmentStatusUseCase(repo)
     appointment = await use_case.execute(
         appointment_id=appointment_id,
@@ -101,12 +123,14 @@ async def update_appointment_status(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Appointment not found",
         )
+    barber = await barber_repo.get_by_id(appointment.barber_id)
+    service = await service_repo.get_by_id(appointment.service_id)
     return AppointmentOut(
         id=appointment.id,
         date=appointment.date,
         time=appointment.time,
-        barber_id=appointment.barber_id,
-        service_id=appointment.service_id,
+        barber_name=barber.name if barber else "Unknown",
+        service_name=service.name if service else "Unknown",
         client_name=appointment.client_name,
         client_phone=appointment.client_phone,
         status=appointment.status,
