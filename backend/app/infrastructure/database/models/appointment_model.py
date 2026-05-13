@@ -1,8 +1,7 @@
 import uuid
 from datetime import date, time
 
-from sqlalchemy import Date, ForeignKey, String, Time
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Date, ForeignKey, String, Time, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base, CommonMixin
@@ -14,12 +13,12 @@ class AppointmentModel(Base, CommonMixin):
     date: Mapped[date] = mapped_column(Date, nullable=False)
     time: Mapped[time] = mapped_column(Time, nullable=False)
     barber_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         ForeignKey("barbers.id", ondelete="RESTRICT"),
         nullable=False,
     )
     service_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         ForeignKey("services.id", ondelete="RESTRICT"),
         nullable=False,
     )

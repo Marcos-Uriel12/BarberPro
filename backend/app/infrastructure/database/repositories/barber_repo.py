@@ -43,14 +43,14 @@ class SQLAlchemyBarberRepository(BarberRepository):
             phone=barber.phone,
             price=barber.price,
         )
-        self._session.add(model)
+        merged = await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(model)
+        await self._session.refresh(merged)
         return Barber(
-            id=model.id,
-            name=model.name,
-            phone=model.phone,
-            price=model.price,
+            id=merged.id,
+            name=merged.name,
+            phone=merged.phone,
+            price=merged.price,
         )
 
     async def delete(self, barber_id: uuid.UUID) -> None:

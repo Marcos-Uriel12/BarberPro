@@ -54,13 +54,13 @@ class SQLAlchemyAdminRepository(AdminRepository):
             username=admin.username,
             hashed_password=admin.hashed_password,
         )
-        self._session.add(model)
+        merged = await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(model)
+        await self._session.refresh(merged)
         return Admin(
-            id=model.id,
-            username=model.username,
-            hashed_password=model.hashed_password,
+            id=merged.id,
+            username=merged.username,
+            hashed_password=merged.hashed_password,
         )
 
     async def delete(self, admin_id: uuid.UUID) -> None:
