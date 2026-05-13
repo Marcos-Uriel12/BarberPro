@@ -39,14 +39,14 @@ Chain strategy: feature-branch-chain
 
 ## Phase 2: Domain + ORM + Migrations
 
-- [ ] 2.1 6 entities: `app/domain/entities/{barber,service,barber_service,availability,appointment,admin}.py` — pure dataclasses
-- [ ] 2.2 `app/domain/interfaces/repositories.py` — 6 ABCs with async CRUD
-- [ ] 2.3 6 ORM models: `app/infrastructure/database/models/{barber,service,barber_service,availability,appointment,admin}_model.py`
-- [ ] 2.4 `app/infrastructure/database/models/__init__.py` — import all 6
-- [ ] 2.5 `alembic.ini` — `script_location = alembic`, empty URL
-- [ ] 2.6 `alembic/env.py` — `asyncio.run()` + `run_async()`, NullPool, compare_type
-- [ ] 2.7 `alembic/script.py.mako` — default template
-- [ ] 2.8 Generate `alembic/versions/001_initial.py` — autogenerate, verify 6 tables
+- [x] 2.1 6 entities: `app/domain/entities/{barber,service,barber_service,availability,appointment,admin}.py` — pure dataclasses
+- [x] 2.2 `app/domain/interfaces/repositories.py` — 6 ABCs with async CRUD
+- [x] 2.3 6 ORM models: `app/infrastructure/database/models/{barber,service,barber_service,availability,appointment,admin}_model.py`
+- [x] 2.4 `app/infrastructure/database/models/__init__.py` — import all 6
+- [x] 2.5 `alembic.ini` — `script_location = alembic`, empty URL
+- [x] 2.6 `alembic/env.py` — `asyncio.run()` + `run_async()`, NullPool, compare_type
+- [x] 2.7 `alembic/script.py.mako` — default template
+- [x] 2.8 Generate `alembic/versions/001_initial.py` — autogenerate, verify 6 tables
 
 ## Phase 3: Infrastructure
 
