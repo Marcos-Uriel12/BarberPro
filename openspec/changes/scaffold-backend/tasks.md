@@ -27,15 +27,15 @@ Chain strategy: feature-branch-chain
 
 ## Phase 1: Foundation
 
-- [ ] 1.1 `pyproject.toml` — all runtime + dev deps per design
-- [ ] 1.2 `docker-compose.yml` — PostgreSQL 16 + Redis 7, health checks, volumes, `barberpro-net`
-- [ ] 1.3 Verify `.env.example` documents all 8 Settings vars
-- [ ] 1.4 Verify `.gitignore` — `__pycache__/`, `.env`, `*.pyc`, `.venv/`, `.DS_Store`
-- [ ] 1.5 All 24 `__init__.py` package markers under `app/` + `tests/`
-- [ ] 1.6 `app/config/settings.py` — `Settings(BaseSettings)` with `env_file`
-- [ ] 1.7 `app/infrastructure/database/base.py` — `declarative_base()`, `CommonMixin` (UUID pk, timestamps)
-- [ ] 1.8 `app/infrastructure/database/engine.py` — async engine, sessionmaker, `get_session()`
-- [ ] 1.9 `app/main.py` — `create_app()` factory, lifespan, CORS, router skeleton
+- [x] 1.1 `pyproject.toml` — all runtime + dev deps per design
+- [x] 1.2 `docker-compose.yml` — PostgreSQL 16 + Redis 7, health checks, volumes, `barberpro-net`
+- [x] 1.3 Verify `.env.example` documents all 8 Settings vars
+- [x] 1.4 Verify `.gitignore` — `__pycache__/`, `.env`, `*.pyc`, `.venv/`, `.DS_Store`
+- [x] 1.5 All 24 `__init__.py` package markers under `app/` + `tests/`
+- [x] 1.6 `app/config/settings.py` — `Settings(BaseSettings)` with `env_file`
+- [x] 1.7 `app/infrastructure/database/base.py` — `declarative_base()`, `CommonMixin` (UUID pk, timestamps)
+- [x] 1.8 `app/infrastructure/database/engine.py` — async engine, sessionmaker, `get_session()`
+- [x] 1.9 `app/main.py` — `create_app()` factory, lifespan, CORS, router skeleton
 
 ## Phase 2: Domain + ORM + Migrations
 
