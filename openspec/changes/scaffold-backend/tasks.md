@@ -50,26 +50,26 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: Infrastructure
 
-- [ ] 3.1 5 repos: `app/infrastructure/database/repositories/{barber,service,availability,appointment,admin}_repo.py`
-- [ ] 3.2 `app/infrastructure/auth/jwt.py` — `JWTService.create_token()`, `verify_token()`
-- [ ] 3.3 `app/infrastructure/auth/password.py` — hash/verify via passlib bcrypt
-- [ ] 3.4 `app/infrastructure/redis/client_repo.py` — hash + 3600s TTL
-- [ ] 3.5 `app/infrastructure/notifications/n8n.py` — httpx POST, no-op if empty URL
+- [x] 3.1 5 repos: `app/infrastructure/database/repositories/{barber,service,availability,appointment,admin}_repo.py`
+- [x] 3.2 `app/infrastructure/auth/jwt.py` — `JWTService.create_token()`, `verify_token()`
+- [x] 3.3 `app/infrastructure/auth/password.py` — hash/verify via bcrypt directly
+- [x] 3.4 `app/infrastructure/redis/client_repo.py` — hash + 3600s TTL
+- [x] 3.5 `app/infrastructure/notifications/n8n.py` — httpx POST, no-op if empty URL
 
 ## Phase 4: Use Cases + Schemas + API
 
-- [ ] 4.1 5 use cases: `app/application/use_cases/{barber,service,appointment,availability,auth}_use_cases.py`
-- [ ] 4.2 5 schemas: `app/interfaces/schemas/{barber,service,availability,appointment,auth}_schema.py`
-- [ ] 4.3 `app/interfaces/api/dependencies.py` — `get_session`, `get_current_admin`, `get_jwt_service`
-- [ ] 4.4 `app/interfaces/api/v1/router.py` — aggregator router
-- [ ] 4.5 5 endpoints: `app/interfaces/api/v1/endpoints/{auth,barbers,services,appointments,availability}.py`
-- [ ] 4.6 Update `app/main.py` — mount router, CORS from settings
+- [x] 4.1 5 use cases: `app/application/use_cases/{barber,service,appointment,availability,auth}_use_cases.py`
+- [x] 4.2 5 schemas: `app/interfaces/schemas/{barber,service,availability,appointment,auth}_schema.py`
+- [x] 4.3 `app/interfaces/api/dependencies.py` — `get_session`, `get_current_admin`, `get_jwt_service`
+- [x] 4.4 `app/interfaces/api/v1/router.py` — aggregator router
+- [x] 4.5 5 endpoints: `app/interfaces/api/v1/endpoints/{auth,barbers,services,appointments,availability}.py`
+- [x] 4.6 Update `app/main.py` — mount router, CORS from settings
 
 ## Phase 5: Tests + Seed
 
-- [ ] 5.1 `tests/conftest.py` — SQLite `async_session`, `async_client` with overrides
-- [ ] 5.2 Domain tests: `tests/domain/test_{barber,service,appointment,admin}.py`
-- [ ] 5.3 Application tests: `tests/application/test_{barber,auth,appointment}_use_cases.py`
-- [ ] 5.4 Infra tests: `tests/infrastructure/test_{barber_repo,jwt,n8n,redis_repo}.py`
-- [ ] 5.5 Interface tests: `tests/interfaces/test_api_{barbers,appointments,auth,availability}.py`
-- [ ] 5.6 Seed migration: `alembic/versions/002_seed_admin.py` — INSERT bcrypt-hashed admin
+- [x] 5.1 `tests/conftest.py` — SQLite `async_session`, `async_client` with overrides
+- [x] 5.2 Domain tests: `tests/domain/test_{barber,service,appointment,admin}.py`
+- [x] 5.3 Application tests: `tests/application/test_{barber,auth,appointment}_use_cases.py`
+- [x] 5.4 Infra tests: `tests/infrastructure/test_{barber_repo,jwt,n8n,redis_repo}.py`
+- [x] 5.5 Interface tests: `tests/interfaces/test_api_{barbers,appointments,auth,availability}.py`
+- [x] 5.6 Seed migration: `alembic/versions/002_seed_admin.py` — INSERT bcrypt-hashed admin

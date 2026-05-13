@@ -1,7 +1,7 @@
+import uuid
 from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Integer, Numeric
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey, Integer, Numeric, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base
@@ -10,13 +10,13 @@ from app.infrastructure.database.base import Base
 class BarberServiceModel(Base):
     __tablename__ = "barber_services"
 
-    barber_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=True),
+    barber_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
         ForeignKey("barbers.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    service_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=True),
+    service_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
         ForeignKey("services.id", ondelete="CASCADE"),
         primary_key=True,
     )
