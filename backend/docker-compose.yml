@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: barberpro-postgres
+    environment:
+      POSTGRES_DB: barberpro
+      POSTGRES_USER: barberpro
+      POSTGRES_PASSWORD: changeme
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barberpro -d barberpro"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - barberpro-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: barberpro-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - barberpro-net
+
+volumes:
+  pgdata:
+    name: barberpro-pgdata
+    driver: local
+
+networks:
+  barberpro-net:
+    name: barberpro-net
+    driver: bridge

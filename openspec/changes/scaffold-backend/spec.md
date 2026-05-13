@@ -10,7 +10,7 @@
 
 **Acceptance Criteria**:
 - `uv sync` installs all deps without errors
-- `uv run python -c "from app.core.config import settings"` loads config from env
+- `uv run python -c "from app.config.settings import settings"` loads config from env
 - All 8 capability directories exist under `app/` and `tests/`
 - `.env.example` documents every env var with a placeholder
 - `.gitignore` excludes `__pycache__/`, `.env`, `*.pyc`, `.venv/`, `.DS_Store`
@@ -18,16 +18,24 @@
 **Contracts**:
 
 ```python
-# app/core/config.py
+# app/config/settings.py
 class Settings(BaseSettings):
+    APP_NAME: str = "BarberPro"
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = True
+
     DATABASE_URL: str  # postgresql+asyncpg://user:pass@host:5432/barberpro
     REDIS_URL: str     # redis://default:pass@localhost:6379/0
-    SECRET_KEY: str
+
+    JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
-    JWT_EXPIRY_HOURS: int = 24
+    JWT_EXPIRE_MINUTES: int = 1440
+
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "changeme"
+
     N8N_WEBHOOK_URL: str = ""
     CORS_ORIGINS: list[str] = ["http://localhost:5173"]
-    ENVIRONMENT: str = "development"
 ```
 
 **Dependencies**: UV ≥0.4, Python ≥3.12
@@ -301,7 +309,7 @@ class CurrentAdmin(BaseModel):
   WHEN a protected endpoint is called
   THEN response is `401` with `{"detail": "Token expired"}`
 
-**Dependencies**: Admin entity (capability 4), `passlib[bcrypt]`, `pyjwt`
+**Dependencies**: Admin entity (capability 4), `bcrypt`, `pyjwt`
 
 ---
 
@@ -312,7 +320,7 @@ class CurrentAdmin(BaseModel):
 **Acceptance Criteria**:
 - `TempClientRepository.store(key, data)` stores in `client:booking:{key}` hash with 3600s TTL
 - `TempClientRepository.get(key)` returns dict or None
-- Appointment creation triggers `N8nNotifier.notify(appointment_data)` as a background task
+- Appointment creation triggers `notify_n8n(appointment_data)` as a background task
 - Webhook payload includes appointment, barber, service, client details
 - Webhook failure is logged — never blocks the response
 - Webhook URL is empty-string-safe (no-op if not configured)
@@ -325,9 +333,8 @@ class TempClientRepository:
     async def store(self, key: str, data: dict, ttl: int = 3600) -> None: ...
     async def get(self, key: str) -> dict | None: ...
 
-# app/infrastructure/webhook/n8n_notifier.py
-class N8nNotifier:
-    async def notify(self, event: AppointmentCreatedEvent) -> None: ...
+# app/infrastructure/notifications/n8n.py
+async def notify_n8n(turno_data: dict) -> None: ...
 ```
 
 **Scenarios**:
@@ -342,16 +349,16 @@ class N8nNotifier:
   THEN `None` is returned
 
 - GIVEN an appointment is created and `N8N_WEBHOOK_URL` is set
-  WHEN `notify(event)` is called with a valid event
+  WHEN `notify_n8n(event_data)` is called with valid data
   THEN httpx POST is sent to the webhook URL with JSON payload
   AND the appointment creation response is returned immediately (non-blocking)
 
 - GIVEN `N8N_WEBHOOK_URL` is empty
-  WHEN `notify(event)` is called
+  WHEN `notify_n8n(event_data)` is called
   THEN no HTTP request is made (no-op)
 
 - GIVEN the webhook endpoint is unreachable
-  WHEN `notify(event)` is called
+  WHEN `notify_n8n(event_data)` is called
   THEN the error is logged and no exception propagates to the caller
 
 **Dependencies**: Redis 7 running (Docker), httpx
