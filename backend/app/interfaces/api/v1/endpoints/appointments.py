@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.use_cases.appointment_use_cases import (
@@ -21,6 +21,7 @@ from app.infrastructure.database.repositories.barber_repo import (
 from app.infrastructure.database.repositories.service_repo import (
     SQLAlchemyServiceRepository,
 )
+from app.infrastructure.notifications.n8n import notify_n8n
 from app.interfaces.api.dependencies import get_current_admin, get_session
 from app.interfaces.schemas.appointment_schema import (
     AppointmentCreate,
@@ -34,6 +35,7 @@ router = APIRouter(prefix="/appointments", tags=["appointments"])
 @router.post("/", response_model=AppointmentOut, status_code=status.HTTP_201_CREATED)
 async def create_appointment(
     body: AppointmentCreate,
+    background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_session),
 ) -> AppointmentOut:
     """Create a new appointment (public)."""
@@ -51,6 +53,18 @@ async def create_appointment(
     )
     barber = await barber_repo.get_by_id(appointment.barber_id)
     service = await service_repo.get_by_id(appointment.service_id)
+
+    # Notify n8n webhook in background — non-blocking
+    n8n_payload = {
+        "cliente": appointment.client_name,
+        "telefono": appointment.client_phone,
+        "fecha": str(appointment.date),
+        "horario": str(appointment.time),
+        "barbero": barber.name if barber else "Unknown",
+        "servicio": service.name if service else "Unknown",
+    }
+    background_tasks.add_task(notify_n8n, n8n_payload)
+
     return AppointmentOut(
         id=appointment.id,
         date=appointment.date,
