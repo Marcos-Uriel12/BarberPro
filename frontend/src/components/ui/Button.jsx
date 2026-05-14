@@ -36,7 +36,7 @@ export function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+      {loading && <Loader2 className="w-4 h-4 animate-spin" role="status" aria-label="Cargando" />}
       {children}
     </button>
   );

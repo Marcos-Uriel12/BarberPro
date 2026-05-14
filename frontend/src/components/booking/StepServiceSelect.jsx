@@ -12,7 +12,7 @@ export function StepServiceSelect() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-foreground">Seleccioná el servicio</h2>
+        <h2 id="step-title" className="text-xl font-semibold text-foreground">Seleccioná el servicio</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Skeleton variant="card" />
           <Skeleton variant="card" />
@@ -25,7 +25,7 @@ export function StepServiceSelect() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600 mb-4">Error cargando servicios. Reintentar.</p>
+        <p className="text-red-600 mb-4" role="alert">Error cargando servicios. Reintentar.</p>
         <Button variant="primary" onClick={refetch}>Reintentar</Button>
       </div>
     );
@@ -41,20 +41,23 @@ export function StepServiceSelect() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Seleccioná el servicio</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <h2 id="step-title" className="text-xl font-semibold text-foreground">Seleccioná el servicio</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="radiogroup" aria-labelledby="step-title">
         {services.map((service) => (
           <Card
             key={service.id}
             selected={serviceId === service.id}
             onClick={() => selectService(service.id)}
             className="transition-all"
+            role="radio"
+            aria-checked={serviceId === service.id}
+            aria-label={`${service.name}, $${service.price}, ${service.duration_minutes} minutos`}
           >
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-foreground">{service.name}</h3>
                 <div className="flex items-center gap-1 text-sm text-muted mt-1">
-                  <Clock className="w-3.5 h-3.5" />
+                  <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>{service.duration_minutes} min</span>
                 </div>
               </div>
@@ -66,7 +69,12 @@ export function StepServiceSelect() {
         ))}
       </div>
       <div className="flex justify-end">
-        <Button variant="primary" disabled={!canProceed} onClick={nextStep}>
+        <Button
+          variant="primary"
+          disabled={!canProceed}
+          onClick={nextStep}
+          aria-label="Continuar al siguiente paso"
+        >
           Continuar
         </Button>
       </div>

@@ -36,16 +36,16 @@ export function BookingSuccess({ appointment }) {
   return (
     <div className="space-y-6 text-center">
       <div className="flex flex-col items-center gap-2">
-        <CheckCircle className="w-16 h-16 text-green-500" />
+        <CheckCircle className="w-16 h-16 text-green-500" aria-hidden="true" />
         <h2 className="text-2xl font-bold text-foreground">¡Reserva confirmada!</h2>
         <p className="text-muted">Tu turno fue creado exitosamente.</p>
       </div>
 
-      <div className="max-w-md mx-auto space-y-3 text-left">
+      <div className="max-w-md mx-auto space-y-3 text-left" aria-label="Detalles de la reserva">
         {details.map(({ icon: Icon, label, value }) => (
           <Card key={label}>
             <div className="flex items-center gap-3">
-              <Icon className="w-5 h-5 text-muted flex-shrink-0" />
+              <Icon className="w-5 h-5 text-muted flex-shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-sm text-muted">{label}</p>
                 <p className="font-medium text-foreground">{value}</p>
@@ -55,7 +55,7 @@ export function BookingSuccess({ appointment }) {
         ))}
       </div>
 
-      <Button variant="primary" onClick={handleNewBooking} size="lg">
+      <Button variant="primary" onClick={handleNewBooking} size="lg" aria-label="Crear una nueva reserva">
         Nueva Reserva
       </Button>
     </div>

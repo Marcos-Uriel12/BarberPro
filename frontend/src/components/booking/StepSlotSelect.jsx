@@ -20,7 +20,7 @@ export function StepSlotSelect() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600 mb-4">Error cargando horarios. Reintentar.</p>
+        <p className="text-red-600 mb-4" role="alert">Error cargando horarios. Reintentar.</p>
         <Button variant="primary" onClick={refetchSlots}>Reintentar</Button>
       </div>
     );
@@ -29,7 +29,7 @@ export function StepSlotSelect() {
   if (!slots || slots.length === 0) {
     return (
       <div className="space-y-4 text-center py-8">
-        <CalendarDays className="w-12 h-12 mx-auto text-muted" />
+        <CalendarDays className="w-12 h-12 mx-auto text-muted" aria-hidden="true" />
         <p className="text-lg text-foreground font-medium">
           No hay horarios disponibles para esta fecha
         </p>
@@ -42,15 +42,15 @@ export function StepSlotSelect() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Seleccioná el horario</h2>
-      <p className="text-sm text-muted">
+      <h2 id="step-title" className="text-xl font-semibold text-foreground">Seleccioná el horario</h2>
+      <p className="text-sm text-muted" id="slot-date-info">
         Horarios disponibles para el {new Date(date + 'T00:00:00').toLocaleDateString('es-AR', {
           weekday: 'long',
           day: 'numeric',
           month: 'long',
         })}
       </p>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3" role="radiogroup" aria-labelledby="step-title">
         {slots.map((s) => {
           const isAvailable = s.available !== false;
           const isSelected = slot === s.start;
@@ -59,6 +59,9 @@ export function StepSlotSelect() {
               key={s.start}
               disabled={!isAvailable}
               onClick={() => selectSlot(s.start)}
+              role="radio"
+              aria-checked={isSelected}
+              aria-label={`Horario ${s.start}${isAvailable ? '' : ' no disponible'}`}
               className={`
                 px-3 py-2 rounded-lg text-sm font-medium border transition-all
                 ${isSelected
@@ -75,8 +78,13 @@ export function StepSlotSelect() {
         })}
       </div>
       <div className="flex justify-between">
-        <Button variant="outline" onClick={prevStep}>Atrás</Button>
-        <Button variant="primary" disabled={!canProceed} onClick={nextStep}>
+        <Button variant="outline" onClick={prevStep} aria-label="Volver al paso anterior">Atrás</Button>
+        <Button
+          variant="primary"
+          disabled={!canProceed}
+          onClick={nextStep}
+          aria-label="Continuar al siguiente paso"
+        >
           Continuar
         </Button>
       </div>

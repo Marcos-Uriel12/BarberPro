@@ -11,14 +11,13 @@ const stepLabels = [
 
 export function WizardProgress({ currentStep }) {
   return (
-    <nav aria-label="Progreso del wizard">
+    <nav aria-label="Progreso del wizard de reserva">
       {/* Desktop: horizontal timeline */}
-      <ol className="hidden md:flex items-center justify-between w-full">
+      <ol className="hidden md:flex items-center justify-between w-full" aria-label="Pasos del wizard">
         {stepLabels.map((label, index) => {
           const stepNum = index + 1;
           const isCompleted = stepNum < currentStep;
           const isActive = stepNum === currentStep;
-          const isPending = stepNum > currentStep;
 
           return (
             <li key={label} className="flex items-center flex-1 last:flex-none">
@@ -34,14 +33,16 @@ export function WizardProgress({ currentStep }) {
                     }
                   `}
                   aria-current={isActive ? 'step' : undefined}
+                  aria-label={`Paso ${stepNum}: ${label}${isActive ? ' (actual)' : isCompleted ? ' (completado)' : ''}`}
                 >
-                  {isCompleted ? <Check className="w-4 h-4" /> : stepNum}
+                  {isCompleted ? <Check className="w-4 h-4" aria-hidden="true" /> : stepNum}
                 </div>
                 <span
                   className={`
                     text-xs font-medium
                     ${isActive ? 'text-foreground' : isCompleted ? 'text-foreground' : 'text-gray-400'}
                   `}
+                  aria-hidden={!isActive}
                 >
                   {label}
                 </span>
@@ -52,6 +53,7 @@ export function WizardProgress({ currentStep }) {
                     flex-1 h-0.5 mx-2 mt-[-1.25rem]
                     ${isCompleted ? 'bg-foreground' : 'bg-gray-200'}
                   `}
+                  aria-hidden="true"
                 />
               )}
             </li>
@@ -60,11 +62,11 @@ export function WizardProgress({ currentStep }) {
       </ol>
 
       {/* Mobile: compact step indicator */}
-      <div className="md:hidden flex items-center justify-center gap-2 text-sm">
+      <div className="md:hidden flex items-center justify-center gap-2 text-sm" aria-live="polite">
         <span className="font-medium text-foreground">
           Paso {currentStep} de {stepLabels.length}
         </span>
-        <span className="text-muted">—</span>
+        <span className="text-muted" aria-hidden="true">—</span>
         <span className="text-muted">{stepLabels[currentStep - 1]}</span>
       </div>
     </nav>
