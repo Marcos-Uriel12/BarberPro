@@ -27,21 +27,23 @@ export function BookingProvider({ children }) {
         if (data.slot) setSlot(data.slot);
         if (data.clientName) setClientName(data.clientName);
         if (data.clientPhone) setClientPhone(data.clientPhone);
+        if (data.step) setStep(data.step); // Recover step too
       } catch {
         // Corrupted data, ignore
       }
     }
   }, []);
 
-  // Persist on every change
+  // Persist on every change (including step)
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      barberId, serviceId, date, slot, clientName, clientPhone,
+      step, barberId, serviceId, date, slot, clientName, clientPhone,
     }));
-  }, [barberId, serviceId, date, slot, clientName, clientPhone]);
+  }, [step, barberId, serviceId, date, slot, clientName, clientPhone]);
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 6));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+  const goToStep = (n) => setStep(Math.max(1, Math.min(n, 6)));
 
   const reset = () => {
     setStep(1);
@@ -77,6 +79,7 @@ export function BookingProvider({ children }) {
         clientPhone,
         nextStep,
         prevStep,
+        goToStep,
         reset,
         selectBarber: setBarberId,
         selectService: setServiceId,
