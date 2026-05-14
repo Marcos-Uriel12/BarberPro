@@ -41,14 +41,14 @@ export function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Scissors className="w-12 h-12 mx-auto text-foreground mb-2" />
+          <Scissors className="w-12 h-12 mx-auto text-foreground mb-2" aria-hidden="true" />
           <h1 className="text-2xl font-bold text-foreground">BarberPro</h1>
           <p className="text-muted mt-1">Iniciar sesión</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-border rounded-lg p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white border border-border rounded-lg p-6 space-y-4" aria-label="Formulario de inicio de sesión">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded text-sm" role="alert">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded text-sm" role="alert" aria-live="assertive">
               {error}
             </div>
           )}
@@ -60,6 +60,7 @@ export function LoginPage() {
             onChange={(e) => setUsername(e.target.value)}
             required
             autoComplete="username"
+            id="login-username"
           />
 
           <Input
@@ -69,6 +70,7 @@ export function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
+            id="login-password"
           />
 
           <Button type="submit" variant="primary" className="w-full" loading={submitting}>

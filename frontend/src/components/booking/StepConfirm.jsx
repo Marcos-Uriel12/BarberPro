@@ -73,12 +73,12 @@ export function StepConfirm() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Confirmá tu reserva</h2>
-      <div className="space-y-3">
+      <h2 id="step-title" className="text-xl font-semibold text-foreground">Confirmá tu reserva</h2>
+      <div className="space-y-3" aria-label="Resumen de la reserva">
         {summaryItems.map(({ icon: Icon, label, value }) => (
           <Card key={label}>
             <div className="flex items-center gap-3">
-              <Icon className="w-5 h-5 text-muted flex-shrink-0" />
+              <Icon className="w-5 h-5 text-muted flex-shrink-0" aria-hidden="true" />
               <div>
                 <p className="text-sm text-muted">{label}</p>
                 <p className="font-medium text-foreground capitalize">{value}</p>
@@ -88,8 +88,8 @@ export function StepConfirm() {
         ))}
       </div>
       <div className="flex justify-between">
-        <Button variant="outline" onClick={prevStep}>Atrás</Button>
-        <Button variant="primary" onClick={handleConfirm} loading={submitting}>
+        <Button variant="outline" onClick={prevStep} aria-label="Volver al paso anterior">Atrás</Button>
+        <Button variant="primary" onClick={handleConfirm} loading={submitting} aria-label="Confirmar reserva de turno">
           Confirmar Reserva
         </Button>
       </div>

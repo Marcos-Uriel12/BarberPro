@@ -65,7 +65,7 @@ export function StepClientForm() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Tus datos</h2>
+      <h2 id="step-title" className="text-xl font-semibold text-foreground">Tus datos</h2>
       <div className="max-w-md space-y-4">
         <Input
           label="Nombre completo"
@@ -77,6 +77,7 @@ export function StepClientForm() {
           required
           placeholder="Juan Pérez"
           maxLength={100}
+          autoComplete="name"
         />
         <Input
           label="Teléfono"
@@ -87,10 +88,16 @@ export function StepClientForm() {
           error={phoneError}
           required
           placeholder="+54 9 11 1234 5678"
+          autoComplete="tel"
         />
       </div>
       <div className="flex justify-end">
-        <Button variant="primary" onClick={handleContinue} disabled={!canProceed}>
+        <Button
+          variant="primary"
+          onClick={handleContinue}
+          disabled={!canProceed}
+          aria-label="Continuar al siguiente paso"
+        >
           Continuar
         </Button>
       </div>

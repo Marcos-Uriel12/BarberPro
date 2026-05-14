@@ -39,11 +39,11 @@ export function AppointmentList({ appointments = [], loading = false, error = nu
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-2 px-3 text-muted font-medium">Hora</th>
-              <th className="text-left py-2 px-3 text-muted font-medium">Cliente</th>
-              <th className="text-left py-2 px-3 text-muted font-medium">Barbero</th>
-              <th className="text-left py-2 px-3 text-muted font-medium">Servicio</th>
-              <th className="text-left py-2 px-3 text-muted font-medium">Estado</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Hora</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Cliente</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Barbero</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Servicio</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Estado</th>
             </tr>
           </thead>
           <tbody>

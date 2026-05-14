@@ -3,17 +3,25 @@
 
 project: BarberPro
 stack:
-  language: Python 3.12
-  framework: FastAPI
-  database: PostgreSQL
-  cache: Redis
-  orm: SQLAlchemy
-  migrations: Alembic
-  package_manager: UV
-  automations: n8n (webhook-based)
+  backend:
+    language: Python 3.12
+    framework: FastAPI
+    database: PostgreSQL
+    cache: Redis
+    orm: SQLAlchemy
+    migrations: Alembic
+    package_manager: UV
+    automations: n8n (webhook-based)
+  frontend:
+    framework: React 18
+    build_tool: Vite
+    styling: Tailwind CSS
+    package_manager: npm/pnpm
+    api_client: fetch/axios
 
 paths:
-  backend: /home/marcos/Documentos/Turnos/backend
+  backend: /home/marcos/Documentos/BarberPro/backend
+  frontend: /home/marcos/Documentos/BarberPro/frontend
 
 persistence:
   mode: hybrid  # Engram + openspec/

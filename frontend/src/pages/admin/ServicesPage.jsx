@@ -96,10 +96,10 @@ export function ServicesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-border">
-                  <th className="text-left py-3 px-4 text-muted font-medium">Nombre</th>
-                  <th className="text-left py-3 px-4 text-muted font-medium">Precio</th>
-                  <th className="text-left py-3 px-4 text-muted font-medium">Duración</th>
-                  <th className="text-right py-3 px-4 text-muted font-medium">Acciones</th>
+                  <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Nombre</th>
+                  <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Precio</th>
+                  <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Duración</th>
+                  <th scope="col" className="text-right py-3 px-4 text-muted font-medium">Acciones</th>
                 </tr>
               </thead>
               <tbody>

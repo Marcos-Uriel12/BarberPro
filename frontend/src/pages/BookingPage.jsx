@@ -16,12 +16,21 @@ const steps = {
   6: StepConfirm,
 };
 
+const stepTitles = {
+  1: 'Seleccioná tu barbero',
+  2: 'Seleccioná el servicio',
+  3: 'Seleccioná la fecha',
+  4: 'Seleccioná el horario',
+  5: 'Tus datos',
+  6: 'Confirmá tu reserva',
+};
+
 function BookingWizard() {
   const { step } = useBooking();
   const StepComponent = steps[step] || steps[1];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" aria-label={`Paso ${step} de 6: ${stepTitles[step]}`}>
       <WizardProgress currentStep={step} />
       <StepComponent />
     </div>
@@ -34,7 +43,9 @@ export function BookingPage() {
       <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="bg-background rounded-xl shadow-sm border border-border p-6">
-            <BookingWizard />
+            <main id="main-content">
+              <BookingWizard />
+            </main>
           </div>
         </div>
       </div>

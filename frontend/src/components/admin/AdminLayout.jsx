@@ -27,13 +27,13 @@ export function AdminLayout() {
               className="p-2 rounded-lg hover:bg-gray-100 text-muted hover:text-foreground transition-colors"
               aria-label="Cerrar sesión"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main id="main-content" className="flex-1 p-6 overflow-auto">
           <Outlet />
         </main>
       </div>
