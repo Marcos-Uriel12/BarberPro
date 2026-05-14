@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../contexts/BookingContext';
 import { api } from '../../lib/api';
@@ -10,17 +10,34 @@ import { Scissors, Calendar, Clock, User, Phone } from 'lucide-react';
 export function StepConfirm() {
   const {
     barberId, serviceId, date, slot, clientName, clientPhone,
-    nextStep, prevStep, reset,
+    nextStep, prevStep, goToStep, reset,
   } = useBooking();
 
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [barberName, setBarberName] = useState('');
+  const [serviceName, setServiceName] = useState('');
 
-  // Resolve display names from context (we use IDs, but show human-readable)
-  // In a real app, we'd have the full objects. Here we show the IDs as fallback.
+  // Fetch barber and service names for display
+  useEffect(() => {
+    async function fetchNames() {
+      if (barberId) {
+        api.get(`/api/v1/barbers/${barberId}`)
+          .then((barber) => setBarberName(barber.name))
+          .catch(() => setBarberName('Barbero no encontrado'));
+      }
+      if (serviceId) {
+        api.get(`/api/v1/services/${serviceId}`)
+          .then((service) => setServiceName(service.name))
+          .catch(() => setServiceName('Servicio no encontrado'));
+      }
+    }
+    fetchNames();
+  }, [barberId, serviceId]);
+
   const summaryItems = [
-    { icon: Scissors, label: 'Barbero', value: barberId },
-    { icon: User, label: 'Servicio', value: serviceId },
+    { icon: Scissors, label: 'Barbero', value: barberName || barberId },
+    { icon: User, label: 'Servicio', value: serviceName || serviceId },
     { icon: Calendar, label: 'Fecha', value: date ? new Date(date + 'T00:00:00').toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '' },
     { icon: Clock, label: 'Horario', value: slot },
     { icon: User, label: 'Nombre', value: clientName },
@@ -45,7 +62,7 @@ export function StepConfirm() {
     } catch (err) {
       if (err.status === 409) {
         toast.error('Este horario ya fue reservado. Volvé al paso 4.');
-        prevStep();
+        goToStep(4);
       } else {
         toast.error('Error creando la reserva. Reintentar.');
       }

@@ -253,16 +253,32 @@ describe('BookingWizard Integration', () => {
         expect(screen.getByText(/este horario ya fue reservado/i)).toBeInTheDocument();
       });
     });
+
+    it('handles 500 server error and stays on step 6', async () => {
+      const serverError = new Error('Internal server error');
+      serverError.status = 500;
+      api.post.mockRejectedValue(serverError);
+
+      renderWithProviders(<StepConfirm />);
+      fireEvent.click(screen.getByRole('button', { name: /confirmar reserva/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText(/error creando la reserva/i)).toBeInTheDocument();
+      });
+      // Should stay on step 6 (confirm button still visible)
+      expect(screen.getByRole('button', { name: /confirmar reserva/i })).toBeInTheDocument();
+    });
   });
 
   describe('BookingContext persistence', () => {
-    it('persists data to localStorage', () => {
+    it('persists data to localStorage including step', () => {
       const { unmount } = renderWithProviders(<StepBarberSelect />);
       fireEvent.click(screen.getByText('Carlos'));
       unmount();
 
       const saved = JSON.parse(localStorage.getItem('bookingWizardState'));
       expect(saved.barberId).toBe('barber-1');
+      expect(saved.step).toBe(1); // Step should also be persisted
     });
 
     it('recovers data from localStorage on mount', () => {
@@ -273,6 +289,7 @@ describe('BookingWizard Integration', () => {
         slot: '10:00',
         clientName: 'Test User',
         clientPhone: '+54 9 11 0000 0000',
+        step: 5, // Should recover step too
       }));
 
       renderWithProviders(<StepClientForm />);

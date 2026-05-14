@@ -90,7 +90,7 @@ export function StepClientForm() {
         />
       </div>
       <div className="flex justify-end">
-        <Button variant="primary" onClick={handleContinue}>
+        <Button variant="primary" onClick={handleContinue} disabled={!canProceed}>
           Continuar
         </Button>
       </div>
