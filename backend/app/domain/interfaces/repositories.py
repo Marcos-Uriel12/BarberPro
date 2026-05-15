@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import date
 from uuid import UUID
 
 from app.domain.entities.admin import Admin
@@ -94,6 +95,11 @@ class AppointmentRepository(ABC):
 
     @abstractmethod
     async def delete(self, appointment_id: UUID) -> None:
+        ...
+
+    @abstractmethod
+    async def list_by_barber_and_date(self, barber_id: UUID, query_date: date) -> list[Appointment]:
+        """List appointments for a barber on a specific date."""
         ...
 
 

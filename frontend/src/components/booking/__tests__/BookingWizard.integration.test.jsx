@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { BookingProvider } from '../../contexts/BookingContext';
+import { BookingProvider } from '../../../contexts/BookingContext';
 import { StepBarberSelect } from '../StepBarberSelect';
 import { StepServiceSelect } from '../StepServiceSelect';
 import { StepDateSelect } from '../StepDateSelect';
@@ -9,9 +9,22 @@ import { StepSlotSelect } from '../StepSlotSelect';
 import { StepClientForm } from '../StepClientForm';
 import { StepConfirm } from '../StepConfirm';
 import { WizardProgress } from '../WizardProgress';
+import { ToastContainer } from '../../ui/Toast';
+
+// Mock localStorage for jsdom
+const store = {};
+const localStorageMock = {
+  getItem: vi.fn((key) => store[key] ?? null),
+  setItem: vi.fn((key, value) => { store[key] = value; }),
+  removeItem: vi.fn((key) => { delete store[key]; }),
+  clear: vi.fn(() => { Object.keys(store).forEach(k => delete store[k]); }),
+  get length() { return Object.keys(store).length; },
+  key: vi.fn((i) => Object.keys(store)[i] ?? null),
+};
+Object.defineProperty(window, 'localStorage', { value: localStorageMock, configurable: true });
 
 // Mock the API module
-vi.mock('../../lib/api', () => ({
+vi.mock('../../../lib/api', () => ({
   api: {
     get: vi.fn(),
     post: vi.fn(),
@@ -19,22 +32,22 @@ vi.mock('../../lib/api', () => ({
 }));
 
 // Mock the hooks that call the API
-vi.mock('../../hooks/useBarbers', () => ({
+vi.mock('../../../hooks/useBarbers', () => ({
   useBarbers: vi.fn(),
 }));
 
-vi.mock('../../hooks/useServices', () => ({
+vi.mock('../../../hooks/useServices', () => ({
   useServices: vi.fn(),
 }));
 
-vi.mock('../../hooks/useAvailability', () => ({
+vi.mock('../../../hooks/useAvailability', () => ({
   useAvailability: vi.fn(),
 }));
 
-import { api } from '../../lib/api';
-import { useBarbers } from '../../hooks/useBarbers';
-import { useServices } from '../../hooks/useServices';
-import { useAvailability } from '../../hooks/useAvailability';
+import { api } from '../../../lib/api';
+import { useBarbers } from '../../../hooks/useBarbers';
+import { useServices } from '../../../hooks/useServices';
+import { useAvailability } from '../../../hooks/useAvailability';
 
 const mockBarbers = [
   { id: 'barber-1', name: 'Carlos', phone: '+54 9 11 1111', price: 2500 },
@@ -55,7 +68,7 @@ const mockSlots = [
 function renderWithProviders(ui) {
   return render(
     <BrowserRouter>
-      <BookingProvider>{ui}</BookingProvider>
+      <BookingProvider>{ui}<ToastContainer /></BookingProvider>
     </BrowserRouter>
   );
 }
@@ -67,12 +80,14 @@ describe('BookingWizard Integration', () => {
     useBarbers.mockReturnValue({ data: mockBarbers, loading: false, error: null, refetch: vi.fn() });
     useServices.mockReturnValue({ data: mockServices, loading: false, error: null, refetch: vi.fn() });
     useAvailability.mockReturnValue({ slots: mockSlots, loading: false, error: null, refetchSlots: vi.fn() });
+    api.get.mockResolvedValue({ name: 'Test' });
   });
 
   describe('WizardProgress', () => {
     it('shows current step label', () => {
       renderWithProviders(<WizardProgress currentStep={1} />);
-      expect(screen.getByText('Barbero')).toBeInTheDocument();
+      // Both desktop and mobile views render the label — assert at least one exists
+      expect(screen.getAllByText('Barbero').length).toBeGreaterThanOrEqual(1);
     });
 
     it('shows step N of 6 on mobile', () => {
@@ -126,6 +141,10 @@ describe('BookingWizard Integration', () => {
     });
 
     it('enables continue after selection', () => {
+      // Context must be at step 2 so canProceed checks serviceId, not barberId
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 2, barberId: 'barber-1',
+      }));
       renderWithProviders(<StepServiceSelect />);
       const continueBtn = screen.getByRole('button', { name: /continuar/i });
       expect(continueBtn).toBeDisabled();
@@ -137,6 +156,9 @@ describe('BookingWizard Integration', () => {
 
   describe('Step 3: Date Selection', () => {
     it('shows datepicker and enables continue with valid date', () => {
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 3, barberId: 'barber-1', serviceId: 'svc-1',
+      }));
       renderWithProviders(<StepDateSelect />);
       const dateInput = screen.getByLabelText(/fecha del turno/i);
       expect(dateInput).toBeInTheDocument();
@@ -156,6 +178,9 @@ describe('BookingWizard Integration', () => {
 
   describe('Step 4: Slot Selection', () => {
     it('renders available slots and enables continue after selection', () => {
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 4, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15',
+      }));
       renderWithProviders(<StepSlotSelect />);
       expect(screen.getByText('09:00')).toBeInTheDocument();
       expect(screen.getByText('10:00')).toBeInTheDocument();
@@ -183,6 +208,11 @@ describe('BookingWizard Integration', () => {
 
   describe('Step 5: Client Form', () => {
     it('enables continue with valid data', () => {
+      // Context needs valid clientName + clientPhone so canProceed is true for step 5
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+        clientName: 'Juan Pérez', clientPhone: '+54 9 11 1234 5678',
+      }));
       renderWithProviders(<StepClientForm />);
       const nameInput = screen.getByLabelText(/nombre completo/i);
       const phoneInput = screen.getByLabelText(/teléfono/i);
@@ -199,23 +229,29 @@ describe('BookingWizard Integration', () => {
     });
 
     it('shows error for empty name', async () => {
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+      }));
       renderWithProviders(<StepClientForm />);
       const nameInput = screen.getByLabelText(/nombre completo/i);
-      const continueBtn = screen.getByRole('button', { name: /continuar/i });
 
-      fireEvent.click(continueBtn); // Try to submit without filling
+      // Button is disabled when canProceed is false — trigger validation via blur instead
+      fireEvent.blur(nameInput);
       await waitFor(() => {
         expect(screen.getByText(/el nombre es obligatorio/i)).toBeInTheDocument();
       });
     });
 
     it('shows error for invalid phone', async () => {
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+      }));
       renderWithProviders(<StepClientForm />);
       const phoneInput = screen.getByLabelText(/teléfono/i);
-      const continueBtn = screen.getByRole('button', { name: /continuar/i });
 
       fireEvent.change(phoneInput, { target: { value: '123' } });
-      fireEvent.click(continueBtn);
+      // Trigger validation via blur since button is disabled
+      fireEvent.blur(phoneInput);
 
       await waitFor(() => {
         expect(screen.getByText(/teléfono inválido/i)).toBeInTheDocument();
@@ -226,6 +262,10 @@ describe('BookingWizard Integration', () => {
   describe('Step 6: Confirmation', () => {
     it('shows summary and calls API on confirm', async () => {
       api.post.mockResolvedValue({ id: 'apt-1', date: '2026-05-15', time: '09:00' });
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 6, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+        clientName: 'Juan Pérez', clientPhone: '+54 9 11 1234 5678',
+      }));
 
       renderWithProviders(<StepConfirm />);
       expect(screen.getByText(/confirmá tu reserva/i)).toBeInTheDocument();
@@ -245,6 +285,10 @@ describe('BookingWizard Integration', () => {
       const conflictError = new Error('Slot already booked');
       conflictError.status = 409;
       api.post.mockRejectedValue(conflictError);
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 6, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+        clientName: 'Juan Pérez', clientPhone: '+54 9 11 1234 5678',
+      }));
 
       renderWithProviders(<StepConfirm />);
       fireEvent.click(screen.getByRole('button', { name: /confirmar reserva/i }));
@@ -258,6 +302,10 @@ describe('BookingWizard Integration', () => {
       const serverError = new Error('Internal server error');
       serverError.status = 500;
       api.post.mockRejectedValue(serverError);
+      localStorage.setItem('bookingWizardState', JSON.stringify({
+        step: 6, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
+        clientName: 'Juan Pérez', clientPhone: '+54 9 11 1234 5678',
+      }));
 
       renderWithProviders(<StepConfirm />);
       fireEvent.click(screen.getByRole('button', { name: /confirmar reserva/i }));

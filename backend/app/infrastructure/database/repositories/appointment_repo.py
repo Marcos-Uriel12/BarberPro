@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -98,3 +99,29 @@ class SQLAlchemyAppointmentRepository(AppointmentRepository):
         if model:
             await self._session.delete(model)
             await self._session.commit()
+
+    async def list_by_barber_and_date(
+        self, barber_id: uuid.UUID, query_date: date
+    ) -> list[Appointment]:
+        result = await self._session.execute(
+            select(AppointmentModel)
+            .where(
+                AppointmentModel.barber_id == barber_id,
+                AppointmentModel.date == query_date,
+            )
+            .order_by(AppointmentModel.time)
+        )
+        models = result.scalars().all()
+        return [
+            Appointment(
+                id=m.id,
+                date=m.date,
+                time=m.time,
+                barber_id=m.barber_id,
+                service_id=m.service_id,
+                client_name=m.client_name,
+                client_phone=m.client_phone,
+                status=m.status,
+            )
+            for m in models
+        ]

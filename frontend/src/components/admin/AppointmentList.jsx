@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { Skeleton } from '../ui/Skeleton';
 
-export function AppointmentList({ appointments = [], loading = false, error = null }) {
+export const AppointmentList = memo(function AppointmentList({ appointments = [], loading = false, error = null }) {
   if (loading) {
     return (
       <div className="bg-white border border-border rounded-lg p-4">
@@ -73,4 +74,4 @@ export function AppointmentList({ appointments = [], loading = false, error = nu
       </div>
     </div>
   );
-}
+});

@@ -47,7 +47,7 @@ export function StepServiceSelect() {
           <Card
             key={service.id}
             selected={serviceId === service.id}
-            onClick={() => selectService(service.id)}
+            onClick={() => selectService(service.id, service.duration_minutes)}
             className="transition-all"
             role="radio"
             aria-checked={serviceId === service.id}

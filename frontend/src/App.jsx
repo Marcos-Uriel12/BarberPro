@@ -10,9 +10,9 @@ import { ToastContainer } from './components/ui/Toast';
 import { Spinner } from './components/ui/Spinner';
 
 // Lazy loaded admin pages
-const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
-const BarbersPage = lazy(() => import('./pages/admin/BarbersPage'));
-const ServicesPage = lazy(() => import('./pages/admin/ServicesPage'));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const BarbersPage = lazy(() => import('./pages/admin/BarbersPage').then(m => ({ default: m.BarbersPage })));
+const ServicesPage = lazy(() => import('./pages/admin/ServicesPage').then(m => ({ default: m.ServicesPage })));
 
 function AdminFallback() {
   return (
