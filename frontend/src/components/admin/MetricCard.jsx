@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import { Skeleton } from '../ui/Skeleton';
 
-export function MetricCard({ title, value, icon: Icon, loading = false, error = null }) {
+export const MetricCard = memo(function MetricCard({ title, value, icon: Icon, loading = false, error = null }) {
   return (
     <div className="bg-white border border-border rounded-lg p-4" aria-label={title}>
       <div className="flex items-center justify-between">
@@ -22,4 +23,4 @@ export function MetricCard({ title, value, icon: Icon, loading = false, error = 
       </div>
     </div>
   );
-}
+});

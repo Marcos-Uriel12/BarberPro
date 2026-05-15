@@ -18,6 +18,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 describe('BookingContext', () => {
   beforeEach(() => {
     localStorageMock.clear();
+    localStorageMock.getItem.mockImplementation(() => null);
     vi.clearAllMocks();
   });
 

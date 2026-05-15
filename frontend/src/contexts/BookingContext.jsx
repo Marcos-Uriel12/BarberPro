@@ -10,6 +10,7 @@ export function BookingProvider({ children }) {
   const [step, setStep] = useState(1);
   const [barberId, setBarberId] = useState(null);
   const [serviceId, setServiceId] = useState(null);
+  const [serviceDuration, setServiceDuration] = useState(null);
   const [date, setDate] = useState(null);
   const [slot, setSlot] = useState(null);
   const [clientName, setClientName] = useState('');
@@ -23,11 +24,12 @@ export function BookingProvider({ children }) {
         const data = JSON.parse(saved);
         if (data.barberId) setBarberId(data.barberId);
         if (data.serviceId) setServiceId(data.serviceId);
+        if (data.serviceDuration) setServiceDuration(data.serviceDuration);
         if (data.date) setDate(data.date);
         if (data.slot) setSlot(data.slot);
         if (data.clientName) setClientName(data.clientName);
         if (data.clientPhone) setClientPhone(data.clientPhone);
-        if (data.step) setStep(data.step); // Recover step too
+        if (data.step) setStep(data.step);
       } catch {
         // Corrupted data, ignore
       }
@@ -37,9 +39,9 @@ export function BookingProvider({ children }) {
   // Persist on every change (including step)
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      step, barberId, serviceId, date, slot, clientName, clientPhone,
+      step, barberId, serviceId, serviceDuration, date, slot, clientName, clientPhone,
     }));
-  }, [step, barberId, serviceId, date, slot, clientName, clientPhone]);
+  }, [step, barberId, serviceId, serviceDuration, date, slot, clientName, clientPhone]);
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 6));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
@@ -49,6 +51,7 @@ export function BookingProvider({ children }) {
     setStep(1);
     setBarberId(null);
     setServiceId(null);
+    setServiceDuration(null);
     setDate(null);
     setSlot(null);
     setClientName('');
@@ -67,12 +70,18 @@ export function BookingProvider({ children }) {
     6: true,
   }[step];
 
+  const selectService = (id, duration) => {
+    setServiceId(id);
+    setServiceDuration(duration);
+  };
+
   return (
     <BookingContext.Provider
       value={{
         step,
         barberId,
         serviceId,
+        serviceDuration,
         date,
         slot,
         clientName,
@@ -82,7 +91,7 @@ export function BookingProvider({ children }) {
         goToStep,
         reset,
         selectBarber: setBarberId,
-        selectService: setServiceId,
+        selectService,
         selectDate: setDate,
         selectSlot: setSlot,
         setClientData: ({ name, phone }) => {

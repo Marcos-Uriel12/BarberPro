@@ -5,8 +5,8 @@ import { Spinner } from '../ui/Spinner';
 import { CalendarDays } from 'lucide-react';
 
 export function StepSlotSelect() {
-  const { barberId, date, slot, selectDate, selectSlot, nextStep, prevStep, canProceed } = useBooking();
-  const { slots, loading, error, refetchSlots } = useAvailability(barberId, date);
+  const { barberId, date, slot, serviceId, serviceDuration, selectDate, selectSlot, nextStep, prevStep, canProceed } = useBooking();
+  const { slots, loading, error, refetchSlots } = useAvailability(barberId, date, serviceId);
 
   if (loading) {
     return (
@@ -50,6 +50,11 @@ export function StepSlotSelect() {
           month: 'long',
         })}
       </p>
+      {serviceDuration && (
+        <p className="text-sm text-muted">
+          Cada turno dura {serviceDuration} minutos
+        </p>
+      )}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3" role="radiogroup" aria-labelledby="step-title">
         {slots.map((s) => {
           const isAvailable = s.available !== false;

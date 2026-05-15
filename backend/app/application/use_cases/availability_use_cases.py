@@ -4,7 +4,7 @@ from datetime import date, time, timedelta
 from uuid import UUID
 
 from app.domain.entities.availability import Availability
-from app.domain.interfaces.repositories import AppointmentRepository, AvailabilityRepository
+from app.domain.interfaces.repositories import AppointmentRepository, AvailabilityRepository, ServiceRepository
 
 
 class GetSlotsUseCase:
@@ -14,11 +14,15 @@ class GetSlotsUseCase:
         self,
         availability_repo: AvailabilityRepository,
         appointment_repo: AppointmentRepository,
+        service_repo: ServiceRepository,
     ) -> None:
         self._availability_repo = availability_repo
         self._appointment_repo = appointment_repo
+        self._service_repo = service_repo
 
-    async def execute(self, barber_id: UUID, query_date: date) -> list[dict]:
+    async def execute(
+        self, barber_id: UUID, query_date: date, service_id: UUID | None = None
+    ) -> list[dict]:
         """Return list of {start, end, available} slots for the given date."""
         day_of_week = query_date.weekday()
         availabilities = await self._availability_repo.list_by_barber(barber_id)
@@ -27,11 +31,19 @@ class GetSlotsUseCase:
         if not day_avail:
             return []
 
-        appointments = await self._appointment_repo.list(status=None, offset=0, limit=1000)
+        # Determine slot size from service duration or default to 30 min
+        slot_minutes = 30
+        if service_id:
+            service = await self._service_repo.get_by_id(service_id)
+            if service:
+                slot_minutes = service.duration_minutes
+
+        # Get appointments for this barber on this date
+        appointments = await self._appointment_repo.list_by_barber_and_date(barber_id, query_date)
         booked_times = {
-            (appt.time, appt.time)
+            (appt.time, self._minutes_to_time(self._time_to_minutes(appt.time) + slot_minutes))
             for appt in appointments
-            if appt.date == query_date and appt.status in ("pending", "confirmed")
+            if appt.status in ("pending", "confirmed")
         }
 
         slots: list[dict] = []
@@ -39,12 +51,12 @@ class GetSlotsUseCase:
             cursor = self._time_to_minutes(av.start_time)
             end_minutes = self._time_to_minutes(av.end_time)
 
-            while cursor + 30 <= end_minutes:
+            while cursor + slot_minutes <= end_minutes:
                 slot_start = self._minutes_to_time(cursor)
-                slot_end = self._minutes_to_time(cursor + 30)
+                slot_end = self._minutes_to_time(cursor + slot_minutes)
 
                 is_booked = any(
-                    slot_start <= s[0] < slot_end or slot_start < s[1] <= slot_end
+                    slot_start < s[1] and slot_end > s[0]
                     for s in booked_times
                 )
 
@@ -53,7 +65,7 @@ class GetSlotsUseCase:
                     "end": slot_end.strftime("%H:%M"),
                     "available": not is_booked,
                 })
-                cursor += 30
+                cursor += slot_minutes
 
         return slots
 
