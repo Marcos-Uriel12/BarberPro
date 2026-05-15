@@ -208,19 +208,13 @@ describe('BookingWizard Integration', () => {
 
   describe('Step 5: Client Form', () => {
     it('enables continue with valid data', () => {
-      // Context needs valid clientName + clientPhone so canProceed is true for step 5
-      localStorage.setItem('bookingWizardState', JSON.stringify({
-        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
-        clientName: 'Juan Pérez', clientPhone: '+54 9 11 1234 5678',
-      }));
       renderWithProviders(<StepClientForm />);
-      const nameInput = screen.getByLabelText(/nombre completo/i);
-      const phoneInput = screen.getByLabelText(/teléfono/i);
+      const nameInput = screen.getByLabelText(/nombre/i);
+      const phoneInput = screen.getByPlaceholderText(/1164898358/i);
 
-      fireEvent.change(nameInput, { target: { value: 'Juan Pérez' } });
-      fireEvent.change(phoneInput, { target: { value: '+54 9 11 1234 5678' } });
+      fireEvent.change(nameInput, { target: { value: 'Juan' } });
+      fireEvent.change(phoneInput, { target: { value: '1164898358' } });
 
-      // onBlur to trigger validation
       fireEvent.blur(nameInput);
       fireEvent.blur(phoneInput);
 
@@ -229,13 +223,9 @@ describe('BookingWizard Integration', () => {
     });
 
     it('shows error for empty name', async () => {
-      localStorage.setItem('bookingWizardState', JSON.stringify({
-        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
-      }));
       renderWithProviders(<StepClientForm />);
-      const nameInput = screen.getByLabelText(/nombre completo/i);
+      const nameInput = screen.getByLabelText(/nombre/i);
 
-      // Button is disabled when canProceed is false — trigger validation via blur instead
       fireEvent.blur(nameInput);
       await waitFor(() => {
         expect(screen.getByText(/el nombre es obligatorio/i)).toBeInTheDocument();
@@ -243,18 +233,14 @@ describe('BookingWizard Integration', () => {
     });
 
     it('shows error for invalid phone', async () => {
-      localStorage.setItem('bookingWizardState', JSON.stringify({
-        step: 5, barberId: 'barber-1', serviceId: 'svc-1', date: '2026-05-15', slot: '09:00',
-      }));
       renderWithProviders(<StepClientForm />);
-      const phoneInput = screen.getByLabelText(/teléfono/i);
+      const phoneInput = screen.getByPlaceholderText(/1164898358/i);
 
-      fireEvent.change(phoneInput, { target: { value: '123' } });
-      // Trigger validation via blur since button is disabled
+      fireEvent.change(phoneInput, { target: { value: '12345' } });
       fireEvent.blur(phoneInput);
 
       await waitFor(() => {
-        expect(screen.getByText(/teléfono inválido/i)).toBeInTheDocument();
+        expect(screen.getByText(/debe empezar con 11/i)).toBeInTheDocument();
       });
     });
   });
@@ -341,7 +327,7 @@ describe('BookingWizard Integration', () => {
       }));
 
       renderWithProviders(<StepClientForm />);
-      expect(screen.getByLabelText(/nombre completo/i)).toHaveValue('Test User');
+      expect(screen.getByLabelText(/nombre/i)).toHaveValue('Test User');
     });
   });
 });
