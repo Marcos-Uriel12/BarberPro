@@ -94,7 +94,6 @@ export function BarbersPage() {
                 <tr className="bg-gray-50 border-b border-border">
                   <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Nombre</th>
                   <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Teléfono</th>
-                  <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Precio</th>
                   <th scope="col" className="text-left py-3 px-4 text-muted font-medium">Horarios</th>
                   <th scope="col" className="text-right py-3 px-4 text-muted font-medium">Acciones</th>
                 </tr>
@@ -104,9 +103,6 @@ export function BarbersPage() {
                 <tr key={barber.id} className="border-b border-border last:border-0">
                   <td className="py-3 px-4 text-foreground">{barber.name}</td>
                   <td className="py-3 px-4 text-foreground">{barber.phone}</td>
-                  <td className="py-3 px-4 text-foreground">
-                    {barber.price ? `$${Number(barber.price).toLocaleString()}` : '—'}
-                  </td>
                   <td className="py-3 px-4">
                     <Button variant="ghost" size="sm" onClick={() => setScheduleBarberId(barber.id)}>
                       <Clock className="w-4 h-4" />

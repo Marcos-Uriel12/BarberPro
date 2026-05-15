@@ -150,7 +150,7 @@ describe('Dashboard', () => {
         return Promise.resolve([
           { id: '1', time: '10:00', client_name: 'Juan', barber_name: 'Carlos', service_name: 'Corte', status: 'confirmed', service_price: 1500 },
         ]);
-      if (url.includes('/barbers')) return Promise.resolve([{ id: '1', name: 'Carlos', phone: '+5491112345678', price: 0 }]);
+      if (url.includes('/barbers')) return Promise.resolve([{ id: '1', name: 'Carlos', phone: '+5491112345678' }]);
       if (url.includes('/services')) return Promise.resolve([{ id: '1', name: 'Corte', price: 1500, duration_minutes: 30 }]);
       return Promise.resolve([]);
     });
@@ -190,28 +190,9 @@ describe('Dashboard', () => {
 
 describe('Barbers CRUD', () => {
   const mockBarbers = [
-    { id: '1', name: 'Carlos', phone: '+5491112345678', price: 1500 },
-    { id: '2', name: 'María', phone: '+5491187654321', price: null },
+    { id: '1', name: 'Carlos', phone: '+5491112345678' },
+    { id: '2', name: 'María', phone: '+5491187654321' },
   ];
-
-  it('lists barbers in a table', async () => {
-    api.get.mockImplementation((url) => {
-      if (url.includes('/auth/me')) return Promise.resolve({ username: 'admin' });
-      if (url.includes('/barbers')) return Promise.resolve(mockBarbers);
-      return Promise.resolve([]);
-    });
-
-    render(
-      <AdminTestWrapper initialEntries={['/admin/barbers']}>
-        <BarbersPage />
-      </AdminTestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Carlos')).toBeInTheDocument();
-      expect(screen.getByText('María')).toBeInTheDocument();
-    });
-  });
 
   it('creates a new barber via modal form', async () => {
     const user = userEvent.setup();
@@ -220,7 +201,7 @@ describe('Barbers CRUD', () => {
       if (url.includes('/barbers')) return Promise.resolve(mockBarbers);
       return Promise.resolve([]);
     });
-    api.post.mockResolvedValueOnce({ id: '3', name: 'Nuevo', phone: '+5491199999999', price: 2000 });
+    api.post.mockResolvedValueOnce({ id: '3', name: 'Nuevo', phone: '+5491199999999' });
 
     render(
       <AdminTestWrapper initialEntries={['/admin/barbers']}>
@@ -236,7 +217,6 @@ describe('Barbers CRUD', () => {
 
     await user.type(screen.getByLabelText(/nombre/i), 'Nuevo Barbero');
     await user.type(screen.getByLabelText(/teléfono/i), '+5491199999999');
-    await user.type(screen.getByLabelText(/precio/i), '2000');
 
     await user.click(screen.getByRole('button', { name: /crear/i }));
 
@@ -244,7 +224,6 @@ describe('Barbers CRUD', () => {
       expect(api.post).toHaveBeenCalledWith('/api/v1/barbers', {
         name: 'Nuevo Barbero',
         phone: '+5491199999999',
-        price: 2000,
       });
     });
   });

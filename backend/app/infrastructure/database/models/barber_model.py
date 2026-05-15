@@ -1,6 +1,4 @@
-from decimal import Decimal
-
-from sqlalchemy import Numeric, String
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.base import Base, CommonMixin
@@ -11,7 +9,6 @@ class BarberModel(Base, CommonMixin):
 
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     phone: Mapped[str] = mapped_column(String(20), nullable=False)
-    price: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
 
     barber_services = relationship(
         "BarberServiceModel",

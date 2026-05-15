@@ -23,7 +23,6 @@ class SQLAlchemyBarberRepository(BarberRepository):
             id=model.id,
             name=model.name,
             phone=model.phone,
-            price=model.price,
         )
 
     async def list(self) -> list[Barber]:
@@ -32,7 +31,7 @@ class SQLAlchemyBarberRepository(BarberRepository):
         )
         models = result.scalars().all()
         return [
-            Barber(id=m.id, name=m.name, phone=m.phone, price=m.price)
+            Barber(id=m.id, name=m.name, phone=m.phone)
             for m in models
         ]
 
@@ -41,7 +40,6 @@ class SQLAlchemyBarberRepository(BarberRepository):
             id=barber.id or uuid.uuid4(),
             name=barber.name,
             phone=barber.phone,
-            price=barber.price,
         )
         merged = await self._session.merge(model)
         await self._session.commit()
@@ -50,7 +48,6 @@ class SQLAlchemyBarberRepository(BarberRepository):
             id=merged.id,
             name=merged.name,
             phone=merged.phone,
-            price=merged.price,
         )
 
     async def delete(self, barber_id: uuid.UUID) -> None:

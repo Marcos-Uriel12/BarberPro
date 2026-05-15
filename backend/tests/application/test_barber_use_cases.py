@@ -22,7 +22,7 @@ async def test_create_barber_use_case_saves_and_returns_entity(async_session):
     repo = SQLAlchemyBarberRepository(async_session)
     use_case = CreateBarberUseCase(repo)
     barber = await use_case.execute(
-        name="Carlos", phone="+5491112345678", price=150.0
+        name="Carlos", phone="+5491112345678"
     )
     assert barber.id is not None
     assert isinstance(barber.id, uuid.UUID)

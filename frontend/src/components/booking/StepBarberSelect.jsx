@@ -50,7 +50,7 @@ export function StepBarberSelect() {
             className="transition-all"
             role="radio"
             aria-checked={barberId === barber.id}
-            aria-label={`${barber.name}${barber.price ? `, $${barber.price}` : ''}`}
+            aria-label={barber.name}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -59,11 +59,6 @@ export function StepBarberSelect() {
                   <p className="text-sm text-muted">{barber.phone}</p>
                 )}
               </div>
-              {barber.price && (
-                <span className="text-lg font-bold text-foreground">
-                  ${barber.price}
-                </span>
-              )}
             </div>
           </Card>
         ))}
