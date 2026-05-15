@@ -38,7 +38,9 @@ export function BookingSuccess({ appointment }) {
       <div className="flex flex-col items-center gap-2">
         <CheckCircle className="w-16 h-16 text-green-500" aria-hidden="true" />
         <h2 className="text-2xl font-bold text-foreground">¡Reserva confirmada!</h2>
-        <p className="text-muted">Tu turno fue creado exitosamente.</p>
+        <p className="text-muted max-w-sm">
+          Te vamos a hablar a WhatsApp para confirmar tu asistencia.
+        </p>
       </div>
 
       <div className="max-w-md mx-auto space-y-3 text-left" aria-label="Detalles de la reserva">
