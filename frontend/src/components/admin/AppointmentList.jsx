@@ -88,8 +88,8 @@ export const AppointmentList = memo(function AppointmentList({ appointments = []
                   </span>
                 </td>
                 <td className="py-2 px-3">
-                  {apt.status === 'pending' && (
-                    <div className="flex gap-1">
+                  <div className="flex gap-1">
+                    {apt.status !== 'confirmed' && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -100,6 +100,8 @@ export const AppointmentList = memo(function AppointmentList({ appointments = []
                       >
                         <Check className="w-4 h-4" />
                       </Button>
+                    )}
+                    {apt.status !== 'cancelled' && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -110,8 +112,8 @@ export const AppointmentList = memo(function AppointmentList({ appointments = []
                       >
                         <X className="w-4 h-4" />
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

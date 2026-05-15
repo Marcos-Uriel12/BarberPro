@@ -2,6 +2,7 @@
 
 from datetime import date, time
 from uuid import UUID
+from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
@@ -25,6 +26,7 @@ class AppointmentOut(BaseModel):
     time: time
     barber_name: str
     service_name: str
+    service_price: Decimal | None = None
     client_name: str
     client_phone: str
     status: str
