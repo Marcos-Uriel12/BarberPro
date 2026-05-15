@@ -1,6 +1,6 @@
 # BarberPro 💈
 
-Sistema de gestión de turnos para barberías. API REST con FastAPI + frontend React.
+API REST con FastAPI + React para gestión de turnos en barberías. Reserva online, panel administrativo, notificaciones vía WhatsApp/Telegram.
 
 ![BarberPro](frontend/src/assets/hero.png)
 
@@ -149,15 +149,17 @@ BarberPro/
 
 ## 📸 Capturas
 
-> Imágenes próximamente
+### 🖥️ Panel de administración — Dashboard
 
-```
-frontend/public/screenshots/
-├── booking-wizard.png
-├── admin-dashboard.png
-├── admin-barbers.png
-└── admin-schedule.png
-```
+![Dashboard](https://raw.githubusercontent.com/Marcos-Uriel12/BarberPro/main/imagenes/dashboard/dashboard.png)
+
+### 📅 Flujo de reserva — Selección de servicio
+
+![Reserva](https://raw.githubusercontent.com/Marcos-Uriel12/BarberPro/main/imagenes/web%20principal/seleccionar%20servicio.png)
+
+### 📋 Gestión de barberos
+
+![Barberos](https://raw.githubusercontent.com/Marcos-Uriel12/BarberPro/main/imagenes/dashboard/panel%20de%20barberos.png)
 
 ---
 
