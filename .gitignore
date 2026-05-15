@@ -29,3 +29,4 @@ htmlcov/
 
 # Docker
 docker-data/
+opencode.txt
