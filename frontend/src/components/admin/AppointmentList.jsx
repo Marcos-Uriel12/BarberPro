@@ -1,7 +1,26 @@
-import { memo } from 'react';
+import { useState, memo } from 'react';
 import { Skeleton } from '../ui/Skeleton';
+import { Button } from '../ui/Button';
+import { api } from '../../lib/api';
+import { toast } from '../ui/Toast';
+import { Check, X } from 'lucide-react';
 
-export const AppointmentList = memo(function AppointmentList({ appointments = [], loading = false, error = null }) {
+export const AppointmentList = memo(function AppointmentList({ appointments = [], loading = false, error = null, onStatusChange }) {
+  const [updating, setUpdating] = useState(null);
+
+  const handleStatus = async (appointmentId, newStatus) => {
+    setUpdating(appointmentId);
+    try {
+      await api.put(`/api/v1/appointments/${appointmentId}/status`, { status: newStatus });
+      toast.success(newStatus === 'confirmed' ? 'Turno confirmado' : 'Turno cancelado');
+      onStatusChange?.();
+    } catch {
+      toast.error('Error actualizando el turno');
+    } finally {
+      setUpdating(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white border border-border rounded-lg p-4">
@@ -45,6 +64,7 @@ export const AppointmentList = memo(function AppointmentList({ appointments = []
               <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Barbero</th>
               <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Servicio</th>
               <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Estado</th>
+              <th scope="col" className="text-left py-2 px-3 text-muted font-medium">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -64,8 +84,36 @@ export const AppointmentList = memo(function AppointmentList({ appointments = []
                         : 'bg-gray-100 text-gray-700'
                     }`}
                   >
-                    {apt.status}
+                    {apt.status === 'pending' ? 'Pendiente' : apt.status === 'confirmed' ? 'Confirmado' : 'Cancelado'}
                   </span>
+                </td>
+                <td className="py-2 px-3">
+                  <div className="flex gap-1">
+                    {apt.status !== 'confirmed' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatus(apt.id, 'confirmed')}
+                        loading={updating === apt.id}
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                        aria-label="Confirmar turno"
+                      >
+                        <Check className="w-4 h-4" />
+                      </Button>
+                    )}
+                    {apt.status !== 'cancelled' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStatus(apt.id, 'cancelled')}
+                        loading={updating === apt.id}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        aria-label="Cancelar turno"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

@@ -28,7 +28,7 @@ async def list_barbers(
     use_case = ListBarbersUseCase(repo)
     barbers = await use_case.execute()
     return [
-        BarberOut(id=b.id, name=b.name, phone=b.phone, price=b.price)
+        BarberOut(id=b.id, name=b.name, phone=b.phone)
         for b in barbers
     ]
 
@@ -45,13 +45,11 @@ async def create_barber(
     barber = await use_case.execute(
         name=body.name,
         phone=body.phone,
-        price=body.price,
     )
     return BarberOut(
         id=barber.id,
         name=barber.name,
         phone=barber.phone,
-        price=barber.price,
     )
 
 
@@ -73,7 +71,6 @@ async def get_barber(
         id=barber.id,
         name=barber.name,
         phone=barber.phone,
-        price=barber.price,
     )
 
 
@@ -91,7 +88,6 @@ async def update_barber(
         barber_id=barber_id,
         name=body.name,
         phone=body.phone,
-        price=body.price,
     )
     if barber is None:
         raise HTTPException(
@@ -102,7 +98,6 @@ async def update_barber(
         id=barber.id,
         name=barber.name,
         phone=barber.phone,
-        price=barber.price,
     )
 
 

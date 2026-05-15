@@ -59,12 +59,25 @@ export function DashboardPage() {
     fetchAll();
   }, []);
 
-  // Calculate estimated revenue from today's appointments
+  // Calculate estimated revenue from today's CONFIRMED appointments
   const estimatedRevenue = appointmentsToday.reduce((sum, apt) => {
-    // If service price is available, add it; otherwise use 0
+    if (apt.status !== 'confirmed') return sum;
     const price = apt.service_price || 0;
     return sum + Number(price);
   }, 0);
+
+  const handleRefresh = () => {
+    // Re-fetch appointments
+    const date = todayStr();
+    (async () => {
+      try {
+        const data = await api.get(`/api/v1/appointments?date=${date}`);
+        setAppointmentsToday(Array.isArray(data) ? data : []);
+      } catch {
+        setError((prev) => ({ ...prev, appointments: true }));
+      }
+    })();
+  };
 
   return (
     <div className="space-y-6">
@@ -95,9 +108,10 @@ export function DashboardPage() {
 
       {/* Appointment List */}
       <AppointmentList
-        appointments={appointmentsToday.slice(0, 5)}
+        appointments={appointmentsToday.slice(0, 10)}
         loading={loading.appointments}
         error={error.appointments}
+        onStatusChange={handleRefresh}
       />
     </div>
   );

@@ -8,7 +8,6 @@ const PHONE_REGEX = /^\+?[\d\s-]{7,20}$/;
 export function BarberForm({ barber, onClose }) {
   const [name, setName] = useState(barber?.name || '');
   const [phone, setPhone] = useState(barber?.phone || '');
-  const [price, setPrice] = useState(barber?.price?.toString() || '');
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -16,7 +15,6 @@ export function BarberForm({ barber, onClose }) {
     if (barber) {
       setName(barber.name || '');
       setPhone(barber.phone || '');
-      setPrice(barber.price?.toString() || '');
     }
   }, [barber]);
 
@@ -35,10 +33,6 @@ export function BarberForm({ barber, onClose }) {
       newErrors.phone = 'Teléfono inválido';
     }
 
-    if (price.trim() && Number(price) <= 0) {
-      newErrors.price = 'El precio debe ser mayor a 0';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,7 +46,6 @@ export function BarberForm({ barber, onClose }) {
       const payload = {
         name: name.trim(),
         phone: phone.trim(),
-        ...(price.trim() ? { price: Number(price) } : {}),
       };
 
       if (barber) {
@@ -90,16 +83,6 @@ export function BarberForm({ barber, onClose }) {
         onChange={(e) => setPhone(e.target.value)}
         error={errors.phone}
         required
-      />
-
-      <Input
-        label="Precio (opcional)"
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        error={errors.price}
-        min="0"
-        step="0.01"
       />
 
       <div className="flex gap-3 justify-end pt-2">

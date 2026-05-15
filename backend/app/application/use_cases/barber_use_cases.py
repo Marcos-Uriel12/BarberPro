@@ -12,8 +12,8 @@ class CreateBarberUseCase:
     def __init__(self, repo: BarberRepository) -> None:
         self._repo = repo
 
-    async def execute(self, name: str, phone: str, price: float | None = None) -> Barber:
-        barber = Barber(name=name, phone=phone, price=price)
+    async def execute(self, name: str, phone: str) -> Barber:
+        barber = Barber(name=name, phone=phone)
         return await self._repo.save(barber)
 
 
@@ -48,7 +48,6 @@ class UpdateBarberUseCase:
         barber_id: UUID,
         name: str | None = None,
         phone: str | None = None,
-        price: float | None = None,
     ) -> Barber | None:
         barber = await self._repo.get_by_id(barber_id)
         if barber is None:
@@ -57,7 +56,6 @@ class UpdateBarberUseCase:
             id=barber.id,
             name=name if name is not None else barber.name,
             phone=phone if phone is not None else barber.phone,
-            price=price if price is not None else barber.price,
         )
         return await self._repo.save(updated)
 
